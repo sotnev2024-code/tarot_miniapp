@@ -1,211 +1,549 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Таро — вытягивание карт</title>
-<style>
-body { margin:0; padding:20px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); font-family:Arial,sans-serif; color:white; min-height:100vh; text-align:center; }
-h1 { font-size:26px; margin-bottom:10px; text-shadow:2px 2px 4px rgba(0,0,0,0.4); }
-.instructions { font-size:18px; margin-bottom:20px; color:#ffd700; }
-.counter { background:rgba(255,255,255,0.2); padding:10px 20px; border-radius:20px; display:inline-block; margin-bottom:20px; font-size:16px; }
-.card-container { perspective:1000px; display:inline-block; cursor:pointer; }
-.card-inner { width:200px; height:300px; position:relative; transform-style:preserve-3d; transition:transform 0.7s ease; margin:auto; }
-.card.flipped .card-inner { transform:rotateY(180deg); }
-.card-front, .card-back { position:absolute; width:100%; height:100%; border-radius:12px; backface-visibility:hidden; box-shadow:0 5px 15px rgba(0,0,0,0.3); display:flex; flex-direction:column; justify-content:center; align-items:center; font-weight:bold; }
-.card-back { background:rgba(255,255,255,0.9); color:#764ba2; border:3px solid transparent; }
-.card-front { background:white; color:#333; transform:rotateY(180deg); border:3px solid #764ba2; }
-.card-front img { max-width:100%; max-height:100%; border-radius:10px; }
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center; }
-.modal-content { background:white; border-radius:20px; padding:30px; max-width:400px; width:90%; text-align:center; color:#333; }
-.modal-title { font-size:24px; color:#4CAF50; margin-bottom:15px; }
-.selected-cards { background:#f5f5f5; border-radius:10px; padding:15px; margin:15px 0; max-height:300px; overflow-y:auto; }
-.selected-card { display:inline-block; background:#4CAF50; color:white; padding:8px 15px; border-radius:20px; margin:5px; font-size:14px; }
-.send-btn { background:#4CAF50; color:white; border:none; padding:15px 30px; border-radius:25px; font-size:18px; cursor:pointer; width:100%; margin-top:20px; }
-.send-btn:hover { background:#45a049; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таро - Вытягивание карт</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #16213e 50%, #7209b7 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            color: #e0b3ff;
+            margin-bottom: 1rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #7209b7;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .deck-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .deck-card {
+            display: inline-block;
+            width: 8rem;
+            height: 12rem;
+            background: linear-gradient(135deg, #7209b7 0%, #16213e 100%);
+            border: 2px solid #ffd700;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .deck-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(114, 9, 183, 0.5);
+        }
+        .deck-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .deck-card-back {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #7209b7 0%, #1a0b2e 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+        .deck-card-back::before {
+            content: '🌟';
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            font-size: 1rem;
+            animation: twinkle 2s infinite;
+        }
+        .deck-card-back::after {
+            content: '✨';
+            position: absolute;
+            bottom: 10%;
+            right: 10%;
+            font-size: 1rem;
+            animation: twinkle 2s infinite 1s;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .loading {
+            position: absolute;
+            inset: 0;
+            background: rgba(114, 9, 183, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .deck-instruction {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #e0b3ff;
+        }
+        .drawn-cards {
+            margin-bottom: 2rem;
+        }
+        .drawn-cards h2 {
+            text-align: center;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+        .card {
+            background: linear-gradient(135deg, #16213e 0%, #7209b7 100%);
+            border: 1px solid #7209b7;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .card-image {
+            width: 100%;
+            height: 8rem;
+            object-fit: cover;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .card-name {
+            text-align: center;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary {
+            background: #7209b7;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #8b2fc7;
+        }
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-gold {
+            background: #ffd700;
+            color: #1a0b2e;
+            font-weight: 600;
+        }
+        .btn-gold:hover {
+            background: #ffed4e;
+        }
+        .btn-outline {
+            background: transparent;
+            color: #e0b3ff;
+            border: 1px solid #7209b7;
+        }
+        .btn-outline:hover {
+            background: #7209b7;
+            color: white;
+        }
+        .footer {
+            text-align: center;
+            color: #b19cd9;
+            font-size: 0.875rem;
+            margin-top: 2rem;
+        }
+        .telegram-status {
+            text-align: center;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .telegram-connected {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid #22c55e;
+        }
+        .telegram-disconnected {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+        @media (max-width: 640px) {
+            .title {
+                font-size: 1.5rem;
+            }
+            .deck-card {
+                width: 6rem;
+                height: 9rem;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<h1>Таро — вытягивание карт</h1>
-<div class="instructions" id="instructions">Вытяните 3 карты</div>
-<div class="counter">Выбрано: <span id="selectedCount">0</span> из <span id="totalNeeded">3</span></div>
-<div id="cardContainer" class="card-container"></div>
-
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <div class="modal-title">Вы выбрали все карты</div>
-    <p>Ваши карты:</p>
-    <div id="modalCards" class="selected-cards"></div>
-    <button id="sendBtn" class="send-btn">Отправить</button>
-  </div>
-</div>
-
-<script>
-// Telegram WebApp
-const tg = window.Telegram?.WebApp;
-if (tg) tg.expand();
-
-// ==== Список всех карт ====
-const tarotCards = [
-  { name:"Башня", url:"https://a.plus-shop.ru/cards/Bashnja.JPG" },
-  { name:"Верховный жрец", url:"https://a.plus-shop.ru/cards/Verhovnyj_zhrets.JPG" },
-  { name:"Влюбленные", url:"https://a.plus-shop.ru/cards/Vljublennye.JPG" },
-  { name:"Восьмерка жезлов", url:"https://a.plus-shop.ru/cards/Vos'merka_zhezlov.JPG" },
-  { name:"Восьмерка кубков", url:"https://a.plus-shop.ru/cards/Vos'merka_kubkov.JPG" },
-  { name:"Восьмерка мечей", url:"https://a.plus-shop.ru/cards/Vos'merka_mechej.JPG" },
-  { name:"Восьмерка пентаклей", url:"https://a.plus-shop.ru/cards/Vos'merka_pentaklej.JPG" },
-  { name:"Двойка жезлов", url:"https://a.plus-shop.ru/cards/Dvojka_zhezlov.JPG" },
-  { name:"Двойка кубков", url:"https://a.plus-shop.ru/cards/Dvojka_kubkov.JPG" },
-  { name:"Двойка мечей", url:"https://a.plus-shop.ru/cards/Dvojka_mechej.JPG" },
-  { name:"Двойка пентаклей", url:"https://a.plus-shop.ru/cards/Dvojka_pentaklej.JPG" },
-  { name:"Тройка жезлов", url:"https://a.plus-shop.ru/cards/Trojka_zhezlov.JPG" },
-  { name:"Тройка кубков", url:"https://a.plus-shop.ru/cards/Trojka_kubkov.JPG" },
-  { name:"Тройка мечей", url:"https://a.plus-shop.ru/cards/Trojka_mechej.JPG" },
-  { name:"Тройка пентаклей", url:"https://a.plus-shop.ru/cards/Trojka_pentaklej.JPG" },
-  { name:"Четверка жезлов", url:"https://a.plus-shop.ru/cards/Chetverka_zhezlov.JPG" },
-  { name:"Четверка кубков", url:"https://a.plus-shop.ru/cards/Chetverka_kubkov.JPG" },
-  { name:"Четверка мечей", url:"https://a.plus-shop.ru/cards/Chetverka_mechej.JPG" },
-  { name:"Четверка пентаклей", url:"https://a.plus-shop.ru/cards/Chetverka_pentaklej.JPG" },
-  { name:"Пятерка жезлов", url:"https://a.plus-shop.ru/cards/Pjaterka_zhezlov.JPG" },
-  { name:"Пятерка кубков", url:"https://a.plus-shop.ru/cards/Pjaterka_kubkov.JPG" },
-  { name:"Пятерка мечей", url:"https://a.plus-shop.ru/cards/Pjaterka_mechej.JPG" },
-  { name:"Пятерка пентаклей", url:"https://a.plus-shop.ru/cards/Pjaterka_pentaklej.JPG" },
-  { name:"Шестёрка жезлов", url:"https://a.plus-shop.ru/cards/Shesterka_zhezlov.JPG" },
-  { name:"Шестёрка кубков", url:"https://a.plus-shop.ru/cards/Shesterka_kubkov.JPG" },
-  { name:"Шестёрка мечей", url:"https://a.plus-shop.ru/cards/Shesterka_mechej.JPG" },
-  { name:"Шестёрка пентаклей", url:"https://a.plus-shop.ru/cards/Shesterka_pentaklej.JPG" },
-  { name:"Семёрка жезлов", url:"https://a.plus-shop.ru/cards/Semerka_zhezlov.JPG" },
-  { name:"Семёрка кубков", url:"https://a.plus-shop.ru/cards/Semerka_kubkov.JPG" },
-  { name:"Семёрка мечей", url:"https://a.plus-shop.ru/cards/Semerka_mechej.JPG" },
-  { name:"Семёрка пентаклей", url:"https://a.plus-shop.ru/cards/Semerka_pentaklej.JPG" },
-  { name:"Девятка жезлов", url:"https://a.plus-shop.ru/cards/Devjatka_zhezlov.JPG" },
-  { name:"Девятка кубков", url:"https://a.plus-shop.ru/cards/Devjatka_kubkov.JPG" },
-  { name:"Девятка мечей", url:"https://a.plus-shop.ru/cards/Devjatka_mechej.JPG" },
-  { name:"Девятка пентаклей", url:"https://a.plus-shop.ru/cards/Devjatka_pentaklej.JPG" },
-  { name:"Десятка жезлов", url:"https://a.plus-shop.ru/cards/Desjatka_zhezlov.JPG" },
-  { name:"Десятка кубков", url:"https://a.plus-shop.ru/cards/Desjatka_kubkov.JPG" },
-  { name:"Десятка мечей", url:"https://a.plus-shop.ru/cards/Desjatka_mechej.JPG" },
-  { name:"Десятка пентаклей", url:"https://a.plus-shop.ru/cards/Desjatka_pentaklej.JPG" },
-  { name:"Паж жезлов", url:"https://a.plus-shop.ru/cards/Pazh_zhezlov.JPG" },
-  { name:"Паж кубков", url:"https://a.plus-shop.ru/cards/Pazh_kubkov.JPG" },
-  { name:"Паж мечей", url:"https://a.plus-shop.ru/cards/Pazh_mechej.JPG" },
-  { name:"Паж пентаклей", url:"https://a.plus-shop.ru/cards/Pazh_pentaklej.JPG" },
-  { name:"Рыцарь жезлов", url:"https://a.plus-shop.ru/cards/Rytsar'_zhezlov.JPG" },
-  { name:"Рыцарь кубков", url:"https://a.plus-shop.ru/cards/Rytsar'_kubkov.JPG" },
-  { name:"Рыцарь мечей", url:"https://a.plus-shop.ru/cards/Rytsar'_mechej.JPG" },
-  { name:"Рыцарь пентаклей", url:"https://a.plus-shop.ru/cards/Rytsar'_pentaklej.JPG" },
-  { name:"Королева жезлов", url:"https://a.plus-shop.ru/cards/Koroleva_zhezlov.JPG" },
-  { name:"Королева кубков", url:"https://a.plus-shop.ru/cards/Koroleva_kubkov.JPG" },
-  { name:"Королева мечей", url:"https://a.plus-shop.ru/cards/Koroleva_mechej.JPG" },
-  { name:"Королева пентаклей", url:"https://a.plus-shop.ru/cards/Koroleva_pentaklej.JPG" },
-  { name:"Король жезлов", url:"https://a.plus-shop.ru/cards/Korol'_zhezlov.JPG" },
-  { name:"Король кубков", url:"https://a.plus-shop.ru/cards/Korol'_kubkov.JPG" },
-  { name:"Король мечей", url:"https://a.plus-shop.ru/cards/Korol'_mechej.JPG" },
-  { name:"Король пентаклей", url:"https://a.plus-shop.ru/cards/Korol'_pentaklej.JPG" },
-  { name:"Императрица", url:"https://a.plus-shop.ru/cards/Imperatritsa.JPG" },
-  { name:"Император", url:"https://a.plus-shop.ru/cards/Imperator.JPG" },
-  { name:"Маг", url:"https://a.plus-shop.ru/cards/Mag.JPG" },
-  { name:"Жрица", url:"https://a.plus-shop.ru/cards/Zhritsa.JPG" },
-  { name:"Звезда", url:"https://a.plus-shop.ru/cards/Zvezda.JPG" },
-  { name:"Луна", url:"https://a.plus-shop.ru/cards/Luna.JPG" },
-  { name:"Солнце", url:"https://a.plus-shop.ru/cards/Solntse.JPG" },
-  { name:"Суд", url:"https://a.plus-shop.ru/cards/Sud.JPG" },
-  { name:"Мир", url:"https://a.plus-shop.ru/cards/Mir.JPG" },
-  { name:"Умеренность", url:"https://a.plus-shop.ru/cards/Umerennost'.JPG" },
-  { name:"Повешенный", url:"https://a.plus-shop.ru/cards/Poveshennyj.JPG" },
-  { name:"Смерть", url:"https://a.plus-shop.ru/cards/Smert'.JPG" },
-  { name:"Дьявол", url:"https://a.plus-shop.ru/cards/D'javol.JPG" },
-  { name:"Шут", url:"https://a.plus-shop.ru/cards/shut.JPG" }
-];
-
-let selectedCards = [];
-let cardsNeeded = 3;
-let currentDeck = [];
-
-document.addEventListener("DOMContentLoaded", () => {
-  // Получаем количество карт из URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const cardsParam = urlParams.get("cards");
-  if (cardsParam) {
-    cardsNeeded = parseInt(cardsParam);
-    document.getElementById("totalNeeded").textContent = cardsNeeded;
-    document.getElementById("instructions").textContent = `Вытяните ${cardsNeeded} карт`;
-  }
-
-  currentDeck = [...tarotCards];
-  shuffle(currentDeck);
-  showNextCard();
-
-  document.getElementById("sendBtn").addEventListener("click", sendData);
-});
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random()*(i+1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-function showNextCard() {
-  const container = document.getElementById("cardContainer");
-  container.innerHTML = "";
-  if (selectedCards.length >= cardsNeeded || currentDeck.length === 0) {
-    showModal();
-    return;
-  }
-  const cardObj = currentDeck.pop();
-  container.innerHTML = `
-    <div class="card">
-      <div class="card-inner">
-        <div class="card-back">🔮</div>
-        <div class="card-front">
-          <img src="${cardObj.url}" alt="${cardObj.name}">
-          <div class="card-text">${cardObj.name}</div>
+    <div class="container">
+        <div id="telegramStatus" class="telegram-status telegram-disconnected">
+            🔗 Подключение к Telegram...
         </div>
-      </div>
+        <div class="header">
+            <h1 class="title">🃏 Вытягивание карт Таро</h1>
+            <p class="subtitle" id="subtitle">Нужно вытянуть карты</p>
+            <div class="badge" id="badge">Выбрано: 0 / 1</div>
+        </div>
+        <div class="deck-section">
+            <div class="deck-card" id="deckCard" onclick="drawCard()">
+                <div class="deck-card-back">
+                    🔮
+                </div>
+                <div class="loading" id="loading" style="display: none;">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            <p class="deck-instruction" id="instruction">Нажмите для вытягивания карты</p>
+        </div>
+        <div class="drawn-cards" id="drawnCardsSection" style="display: none;">
+            <h2>Ваши карты:</h2>
+            <div class="cards-grid" id="cardsGrid"></div>
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" id="drawBtn" onclick="drawCard()">
+                Вытянуть карту
+            </button>
+            <button class="btn btn-gold" id="sendBtn" onclick="sendResults()" style="display: none;">
+                ✨ Отправить результат
+            </button>
+            <button class="btn btn-outline" onclick="resetCards()">
+                🔄 Начать заново
+            </button>
+        </div>
+        <div class="footer">
+            <p id="footerText">Приложение готово к работе с Telegram Bot</p>
+        </div>
     </div>
-  `;
-  const cardEl = container.querySelector(".card");
-  cardEl.addEventListener("click", () => selectThis(cardObj, cardEl));
-}
+    <script>
+        const tarotCards = [
+            { name: "Башня", url: "/images/photo1765468769.jpg" },
+            { name: "Верховный жрец", url: "/images/photo1765468769.jpg" },
+            { name: "Влюбленные", url: "/images/photo1765468769.jpg" },
+            { name: "Восьмерка жезлов", url: "https://a.plus-shop.ru/cards/Vos'/images/photo1765468768.jpg" },
+            { name: "Восьмерка кубков", url: "https://a.plus-shop.ru/cards/Vos'/images/photo1765468768.jpg" },
+            { name: "Восьмерка мечей", url: "https://a.plus-shop.ru/cards/Vos'/images/photo1765468769.jpg" },
+            { name: "Восьмерка пентаклей", url: "https://a.plus-shop.ru/cards/Vos'/images/photo1765468768.jpg" },
+            { name: "Двойка жезлов", url: "https://a.plus-shop.ru/cards/Dvojka_zhezlov.JPG" },
+            { name: "Двойка кубков", url: "https://a.plus-shop.ru/cards/Dvojka_kubkov.JPG" },
+            { name: "Двойка мечей", url: "https://a.plus-shop.ru/cards/Dvojka_mechej.JPG" },
+            { name: "Двойка пентаклей", url: "https://a.plus-shop.ru/cards/Dvojka_pentaklej.JPG" },
+            { name: "Тройка жезлов", url: "https://a.plus-shop.ru/cards/Trojka_zhezlov.JPG" },
+            { name: "Тройка кубков", url: "https://a.plus-shop.ru/cards/Trojka_kubkov.JPG" },
+            { name: "Тройка мечей", url: "https://a.plus-shop.ru/cards/Trojka_mechej.JPG" },
+            { name: "Тройка пентаклей", url: "https://a.plus-shop.ru/cards/Trojka_pentaklej.JPG" },
+            { name: "Четверка жезлов", url: "https://a.plus-shop.ru/cards/Chetverka_zhezlov.JPG" },
+            { name: "Четверка кубков", url: "https://a.plus-shop.ru/cards/Chetverka_kubkov.JPG" },
+            { name: "Четверка мечей", url: "https://a.plus-shop.ru/cards/Chetverka_mechej.JPG" },
+            { name: "Четверка пентаклей", url: "https://a.plus-shop.ru/cards/Chetverka_pentaklej.JPG" },
+            { name: "Пятерка жезлов", url: "https://a.plus-shop.ru/cards/Pjaterka_zhezlov.JPG" },
+            { name: "Пятерка кубков", url: "https://a.plus-shop.ru/cards/Pjaterka_kubkov.JPG" },
+            { name: "Пятерка мечей", url: "https://a.plus-shop.ru/cards/Pjaterka_mechej.JPG" },
+            { name: "Пятерка пентаклей", url: "https://a.plus-shop.ru/cards/Pjaterka_pentaklej.JPG" },
+            { name: "Шестёрка жезлов", url: "https://a.plus-shop.ru/cards/Shesterka_zhezlov.JPG" },
+            { name: "Шестёрка кубков", url: "https://a.plus-shop.ru/cards/Shesterka_kubkov.JPG" },
+            { name: "Шестёрка мечей", url: "https://a.plus-shop.ru/cards/Shesterka_mechej.JPG" },
+            { name: "Шестёрка пентаклей", url: "https://a.plus-shop.ru/cards/Shesterka_pentaklej.JPG" },
+            { name: "Семёрка жезлов", url: "https://a.plus-shop.ru/cards/Semerka_zhezlov.JPG" },
+            { name: "Семёрка кубков", url: "https://a.plus-shop.ru/cards/Semerka_kubkov.JPG" },
+            { name: "Семёрка мечей", url: "https://a.plus-shop.ru/cards/Semerka_mechej.JPG" },
+            { name: "Семёрка пентаклей", url: "https://a.plus-shop.ru/cards/Semerka_pentaklej.JPG" },
+            { name: "Девятка жезлов", url: "/images/photo1765468771.jpg" },
+            { name: "Девятка кубков", url: "/images/NineofCups.jpg" },
+            { name: "Девятка мечей", url: "/images/photo1765468770.jpg" },
+            { name: "Девятка пентаклей", url: "/images/photo1765468771.jpg" },
+            { name: "Десятка жезлов", url: "/images/photo1765468770.jpg" },
+            { name: "Десятка кубков", url: "/images/photo1765468771.jpg" },
+            { name: "Десятка мечей", url: "/images/photo1765468772.jpg" },
+            { name: "Десятка пентаклей", url: "/images/photo1765468772.jpg" },
+            { name: "Паж жезлов", url: "https://a.plus-shop.ru/cards/Pazh_zhezlov.JPG" },
+            { name: "Паж кубков", url: "https://a.plus-shop.ru/cards/Pazh_kubkov.JPG" },
+            { name: "Паж мечей", url: "https://a.plus-shop.ru/cards/Pazh_mechej.JPG" },
+            { name: "Паж пентаклей", url: "https://a.plus-shop.ru/cards/Pazh_pentaklej.JPG" },
+            { name: "Рыцарь жезлов", url: "https://a.plus-shop.ru/cards/Rytsar'/images/photo1765468768.jpg" },
+            { name: "Рыцарь кубков", url: "https://a.plus-shop.ru/cards/Rytsar'/images/photo1765468768.jpg" },
+            { name: "Рыцарь мечей", url: "https://a.plus-shop.ru/cards/Rytsar'/images/photo1765468768.jpg" },
+            { name: "Рыцарь пентаклей", url: "https://a.plus-shop.ru/cards/Rytsar'/images/photo1765468771.jpg" },
+            { name: "Королева жезлов", url: "https://a.plus-shop.ru/cards/Koroleva_zhezlov.JPG" },
+            { name: "Королева кубков", url: "https://a.plus-shop.ru/cards/Koroleva_kubkov.JPG" },
+            { name: "Королева мечей", url: "https://a.plus-shop.ru/cards/Koroleva_mechej.JPG" },
+            { name: "Королева пентаклей", url: "https://a.plus-shop.ru/cards/Koroleva_pentaklej.JPG" },
+            { name: "Король жезлов", url: "https://a.plus-shop.ru/cards/Korol'/images/photo1765468768.jpg" },
+            { name: "Король кубков", url: "https://a.plus-shop.ru/cards/Korol'/images/photo1765468768.jpg" },
+            { name: "Король мечей", url: "https://a.plus-shop.ru/cards/Korol'/images/photo1765468768.jpg" },
+            { name: "Король пентаклей", url: "https://a.plus-shop.ru/cards/Korol'/images/photo1765468771.jpg" },
+            { name: "Императрица", url: "https://a.plus-shop.ru/cards/Imperatritsa.JPG" },
+            { name: "Император", url: "https://a.plus-shop.ru/cards/Imperator.JPG" },
+            { name: "Маг", url: "https://a.plus-shop.ru/cards/Mag.JPG" },
+            { name: "Жрица", url: "https://a.plus-shop.ru/cards/Zhritsa.JPG" },
+            { name: "Звезда", url: "https://a.plus-shop.ru/cards/Zvezda.JPG" },
+            { name: "Луна", url: "https://a.plus-shop.ru/cards/Luna.JPG" },
+            { name: "Солнце", url: "https://a.plus-shop.ru/cards/Solntse.JPG" },
+            { name: "Суд", url: "https://a.plus-shop.ru/cards/Sud.JPG" },
+            { name: "Мир", url: "https://a.plus-shop.ru/cards/Mir.JPG" },
+            { name: "Умеренность", url: "https://a.plus-shop.ru/cards/Umerennost'.JPG" },
+            { name: "Повешенный", url: "https://a.plus-shop.ru/cards/Poveshennyj.JPG" },
+            { name: "Смерть", url: "https://a.plus-shop.ru/cards/Smert'.JPG" },
+            { name: "Дьявол", url: "https://a.plus-shop.ru/cards/D'/images/photo1765468768.jpg" },
+            { name: "Шут", url: "/images/photo1765468772.jpg" }
+        ];
 
-function selectThis(cardObj, cardEl) {
-  cardEl.classList.add("flipped");
-  selectedCards.push(cardObj);
-  document.getElementById("selectedCount").textContent = selectedCards.length;
+        let cardsCount = 1;
+        let drawnCards = [];
+        let isDrawing = false;
+        let shuffledDeck = [];
+        let telegramWebApp = null;
 
-  setTimeout(() => {
-    cardEl.style.transition = "transform 0.5s ease, opacity 0.5s ease";
-    cardEl.style.transform = "translateX(500px) rotate(30deg)";
-    cardEl.style.opacity = "0";
-    setTimeout(showNextCard, 500);
-  }, 800);
-}
+        function init() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                telegramWebApp = window.Telegram.WebApp;
+                telegramWebApp.ready();
+                updateTelegramStatus(true);
+                telegramWebApp.expand();
+                telegramWebApp.MainButton.hide();
+                console.log('Telegram WebApp инициализирован');
+            } else {
+                updateTelegramStatus(false);
+                console.log('Telegram WebApp не найден - режим демонстрации');
+            }
 
-function showModal() {
-  const modal = document.getElementById("modal");
-  const modalCards = document.getElementById("modalCards");
-  modalCards.innerHTML = "";
-  selectedCards.forEach(c => {
-    const el = document.createElement("div");
-    el.className = "selected-card";
-    el.textContent = c.name;
-    modalCards.appendChild(el);
-  });
-  modal.style.display = "flex";
-}
+            const urlParams = new URLSearchParams(window.location.search);
+            const cards = urlParams.get('cards');
+            if (cards) {
+                cardsCount = parseInt(cards, 10);
+            }
+            updateUI();
+            shuffleDeck();
+        }
 
-function sendData() {
-  const result = selectedCards.map(c => c.name);
-  if (tg && tg.sendData) {
-    console.log("TG object:", tg);
-    tg.sendData(JSON.stringify({cards: result, count: result.length}));
-    tg.close();
-  } else {
-    alert("Вы выбрали карты:\n" + result.join(", "));
-  }
-}
-</script>
+        function updateTelegramStatus(connected) {
+            const statusElement = document.getElementById('telegramStatus');
+            const footerElement = document.getElementById('footerText');
+
+            if (connected) {
+                statusElement.className = 'telegram-status telegram-connected';
+                statusElement.textContent = '✅ Подключено к Telegram';
+                footerElement.textContent = 'Данные будут отправлены в ваш бот';
+            } else {
+                statusElement.className = 'telegram-status telegram-disconnected';
+                statusElement.textContent = '⚠️ Режим демонстрации (без Telegram)';
+                footerElement.textContent = 'Для работы с ботом откройте через Telegram';
+            }
+        }
+
+        function shuffleDeck() {
+            shuffledDeck = [...tarotCards].sort(() => Math.random() - 0.5);
+        }
+
+        function updateUI() {
+            const subtitle = document.getElementById('subtitle');
+            const badge = document.getElementById('badge');
+            const instruction = document.getElementById('instruction');
+            const drawBtn = document.getElementById('drawBtn');
+            const sendBtn = document.getElementById('sendBtn');
+            const deckCard = document.getElementById('deckCard');
+
+            const cardWord = cardsCount === 1 ? 'карту' : cardsCount < 5 ? 'карты' : 'карт';
+            subtitle.textContent = `Нужно вытянуть ${cardsCount} ${cardWord}`;
+            badge.textContent = `Выбрано: ${drawnCards.length} / ${cardsCount}`;
+
+            if (drawnCards.length >= cardsCount) {
+                instruction.textContent = 'Все карты вытянуты';
+                drawBtn.style.display = 'none';
+                sendBtn.style.display = 'inline-block';
+                deckCard.classList.add('disabled');
+
+                if (telegramWebApp) {
+                    telegramWebApp.MainButton.setText('✨ Отправить результат');
+                    telegramWebApp.MainButton.show();
+                    telegramWebApp.MainButton.onClick(sendResults);
+                }
+            } else {
+                instruction.textContent = isDrawing ? 'Вытягиваем карту...' : 'Нажмите для вытягивания карты';
+                drawBtn.style.display = 'inline-block';
+                sendBtn.style.display = 'none';
+                deckCard.classList.remove('disabled');
+
+                if (telegramWebApp) {
+                    telegramWebApp.MainButton.hide();
+                }
+            }
+            drawBtn.disabled = isDrawing || drawnCards.length >= cardsCount;
+            drawBtn.textContent = isDrawing ? 'Вытягиваем...' : 'Вытянуть карту';
+        }
+
+        function drawCard() {
+            if (drawnCards.length >= cardsCount || isDrawing) return;
+            isDrawing = true;
+            document.getElementById('loading').style.display = 'flex';
+            updateUI();
+
+            if (telegramWebApp) {
+                telegramWebApp.HapticFeedback.impactOccurred('light');
+            }
+
+            setTimeout(() => {
+                const availableCards = shuffledDeck.filter(
+                    card => !drawnCards.some(drawn => drawn.name === card.name)
+                );
+
+                if (availableCards.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * availableCards.length);
+                    const selectedCard = availableCards[randomIndex];
+                    drawnCards.push(selectedCard);
+                    displayDrawnCards();
+
+                    if (telegramWebApp) {
+                        telegramWebApp.HapticFeedback.impactOccurred('medium');
+                    }
+                }
+                isDrawing = false;
+                document.getElementById('loading').style.display = 'none';
+                updateUI();
+            }, 1000);
+        }
+
+        function displayDrawnCards() {
+            const section = document.getElementById('drawnCardsSection');
+            const grid = document.getElementById('cardsGrid');
+
+            if (drawnCards.length > 0) {
+                section.style.display = 'block';
+
+                const lastCard = drawnCards[drawnCards.length - 1];
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card';
+                cardElement.innerHTML = `
+                    <img src="${lastCard.url}" alt="${lastCard.name}" class="card-image"
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzcyMDliNyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+🃏</dGV4dD48L3N2Zz4='">
+                    <p class="card-name">${lastCard.name}</p>
+                `;
+                grid.appendChild(cardElement);
+            }
+        }
+
+        function sendResults() {
+            if (telegramWebApp) {
+                telegramWebApp.HapticFeedback.impactOccurred('heavy');
+            }
+
+            if (telegramWebApp) {
+                const data = JSON.stringify({
+                    drawnCards: drawnCards,
+                    cardsCount: cardsCount,
+                    timestamp: new Date().toISOString()
+                });
+
+                console.log('Отправляем данные в Telegram:', data);
+                telegramWebApp.sendData(data);
+
+                setTimeout(() => {
+                    telegramWebApp.close();
+                }, 500);
+            } else {
+                const cardNames = drawnCards.map(card => card.name).join('\n');
+                alert(`Выбранные карты:\n${cardNames}\n\nВ реальном режиме данные отправятся в бот`);
+            }
+        }
+
+        function resetCards() {
+            drawnCards = [];
+            document.getElementById('cardsGrid').innerHTML = '';
+            document.getElementById('drawnCardsSection').style.display = 'none';
+            shuffleDeck();
+            updateUI();
+
+            if (telegramWebApp) {
+                telegramWebApp.HapticFeedback.impactOccurred('light');
+            }
+        }
+
+        window.addEventListener('load', init);
+
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.onEvent('mainButtonClicked', sendResults);
+        }
+    </script>
 </body>
 </html>
