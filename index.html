@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <title>Таро - Вытягивание карт</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
@@ -162,6 +162,7 @@
             object-fit: cover;
             border-radius: 0.25rem;
             margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #1a0b2e 0%, #7209b7 100%);
         }
         .card-name {
             text-align: center;
@@ -297,76 +298,70 @@
         </div>
     </div>
     <script>
+        // Полный список карт Таро
         const tarotCards = [
-            { name: "Башня", url: "/images/photo1765468769.jpg" },
-            { name: "Верховный жрец", url: "/images/photo1765468769.jpg" },
-            { name: "Влюбленные", url: "/images/photo1765468769.jpg" },
-            { name: "Восьмерка жезлов", url: "https://a.plus-shop.ru/cards/Vos'/images/photo1765468768.jpg" },
-            { name: "Восьмерка кубков", url: "https://a.plus-shop.ru/cards/Vos'/images/photo1765468768.jpg" },
-            { name: "Восьмерка мечей", url: "https://a.plus-shop.ru/cards/Vos'/images/photo1765468769.jpg" },
-            { name: "Восьмерка пентаклей", url: "https://a.plus-shop.ru/cards/Vos'/images/photo1765468768.jpg" },
-            { name: "Двойка жезлов", url: "https://a.plus-shop.ru/cards/Dvojka_zhezlov.JPG" },
-            { name: "Двойка кубков", url: "https://a.plus-shop.ru/cards/Dvojka_kubkov.JPG" },
-            { name: "Двойка мечей", url: "https://a.plus-shop.ru/cards/Dvojka_mechej.JPG" },
-            { name: "Двойка пентаклей", url: "https://a.plus-shop.ru/cards/Dvojka_pentaklej.JPG" },
-            { name: "Тройка жезлов", url: "https://a.plus-shop.ru/cards/Trojka_zhezlov.JPG" },
-            { name: "Тройка кубков", url: "https://a.plus-shop.ru/cards/Trojka_kubkov.JPG" },
-            { name: "Тройка мечей", url: "https://a.plus-shop.ru/cards/Trojka_mechej.JPG" },
-            { name: "Тройка пентаклей", url: "https://a.plus-shop.ru/cards/Trojka_pentaklej.JPG" },
-            { name: "Четверка жезлов", url: "https://a.plus-shop.ru/cards/Chetverka_zhezlov.JPG" },
-            { name: "Четверка кубков", url: "https://a.plus-shop.ru/cards/Chetverka_kubkov.JPG" },
-            { name: "Четверка мечей", url: "https://a.plus-shop.ru/cards/Chetverka_mechej.JPG" },
-            { name: "Четверка пентаклей", url: "https://a.plus-shop.ru/cards/Chetverka_pentaklej.JPG" },
-            { name: "Пятерка жезлов", url: "https://a.plus-shop.ru/cards/Pjaterka_zhezlov.JPG" },
-            { name: "Пятерка кубков", url: "https://a.plus-shop.ru/cards/Pjaterka_kubkov.JPG" },
-            { name: "Пятерка мечей", url: "https://a.plus-shop.ru/cards/Pjaterka_mechej.JPG" },
-            { name: "Пятерка пентаклей", url: "https://a.plus-shop.ru/cards/Pjaterka_pentaklej.JPG" },
-            { name: "Шестёрка жезлов", url: "https://a.plus-shop.ru/cards/Shesterka_zhezlov.JPG" },
-            { name: "Шестёрка кубков", url: "https://a.plus-shop.ru/cards/Shesterka_kubkov.JPG" },
-            { name: "Шестёрка мечей", url: "https://a.plus-shop.ru/cards/Shesterka_mechej.JPG" },
-            { name: "Шестёрка пентаклей", url: "https://a.plus-shop.ru/cards/Shesterka_pentaklej.JPG" },
-            { name: "Семёрка жезлов", url: "https://a.plus-shop.ru/cards/Semerka_zhezlov.JPG" },
-            { name: "Семёрка кубков", url: "https://a.plus-shop.ru/cards/Semerka_kubkov.JPG" },
-            { name: "Семёрка мечей", url: "https://a.plus-shop.ru/cards/Semerka_mechej.JPG" },
-            { name: "Семёрка пентаклей", url: "https://a.plus-shop.ru/cards/Semerka_pentaklej.JPG" },
-            { name: "Девятка жезлов", url: "/images/photo1765468771.jpg" },
-            { name: "Девятка кубков", url: "/images/NineofCups.jpg" },
-            { name: "Девятка мечей", url: "/images/photo1765468770.jpg" },
-            { name: "Девятка пентаклей", url: "/images/photo1765468771.jpg" },
-            { name: "Десятка жезлов", url: "/images/photo1765468770.jpg" },
-            { name: "Десятка кубков", url: "/images/photo1765468771.jpg" },
-            { name: "Десятка мечей", url: "/images/photo1765468772.jpg" },
-            { name: "Десятка пентаклей", url: "/images/photo1765468772.jpg" },
-            { name: "Паж жезлов", url: "https://a.plus-shop.ru/cards/Pazh_zhezlov.JPG" },
-            { name: "Паж кубков", url: "https://a.plus-shop.ru/cards/Pazh_kubkov.JPG" },
-            { name: "Паж мечей", url: "https://a.plus-shop.ru/cards/Pazh_mechej.JPG" },
-            { name: "Паж пентаклей", url: "https://a.plus-shop.ru/cards/Pazh_pentaklej.JPG" },
-            { name: "Рыцарь жезлов", url: "https://a.plus-shop.ru/cards/Rytsar'/images/photo1765468768.jpg" },
-            { name: "Рыцарь кубков", url: "https://a.plus-shop.ru/cards/Rytsar'/images/photo1765468768.jpg" },
-            { name: "Рыцарь мечей", url: "https://a.plus-shop.ru/cards/Rytsar'/images/photo1765468768.jpg" },
-            { name: "Рыцарь пентаклей", url: "https://a.plus-shop.ru/cards/Rytsar'/images/photo1765468771.jpg" },
-            { name: "Королева жезлов", url: "https://a.plus-shop.ru/cards/Koroleva_zhezlov.JPG" },
-            { name: "Королева кубков", url: "https://a.plus-shop.ru/cards/Koroleva_kubkov.JPG" },
-            { name: "Королева мечей", url: "https://a.plus-shop.ru/cards/Koroleva_mechej.JPG" },
-            { name: "Королева пентаклей", url: "https://a.plus-shop.ru/cards/Koroleva_pentaklej.JPG" },
-            { name: "Король жезлов", url: "https://a.plus-shop.ru/cards/Korol'/images/photo1765468768.jpg" },
-            { name: "Король кубков", url: "https://a.plus-shop.ru/cards/Korol'/images/photo1765468768.jpg" },
-            { name: "Король мечей", url: "https://a.plus-shop.ru/cards/Korol'/images/photo1765468768.jpg" },
-            { name: "Король пентаклей", url: "https://a.plus-shop.ru/cards/Korol'/images/photo1765468771.jpg" },
-            { name: "Императрица", url: "https://a.plus-shop.ru/cards/Imperatritsa.JPG" },
-            { name: "Император", url: "https://a.plus-shop.ru/cards/Imperator.JPG" },
-            { name: "Маг", url: "https://a.plus-shop.ru/cards/Mag.JPG" },
-            { name: "Жрица", url: "https://a.plus-shop.ru/cards/Zhritsa.JPG" },
-            { name: "Звезда", url: "https://a.plus-shop.ru/cards/Zvezda.JPG" },
-            { name: "Луна", url: "https://a.plus-shop.ru/cards/Luna.JPG" },
-            { name: "Солнце", url: "https://a.plus-shop.ru/cards/Solntse.JPG" },
-            { name: "Суд", url: "https://a.plus-shop.ru/cards/Sud.JPG" },
-            { name: "Мир", url: "https://a.plus-shop.ru/cards/Mir.JPG" },
-            { name: "Умеренность", url: "https://a.plus-shop.ru/cards/Umerennost'.JPG" },
-            { name: "Повешенный", url: "https://a.plus-shop.ru/cards/Poveshennyj.JPG" },
-            { name: "Смерть", url: "https://a.plus-shop.ru/cards/Smert'.JPG" },
-            { name: "Дьявол", url: "https://a.plus-shop.ru/cards/D'/images/photo1765468768.jpg" },
-            { name: "Шут", url: "/images/photo1765468772.jpg" }
+            { name: "Шут", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Шут" },
+            { name: "Маг", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Маг" },
+            { name: "Верховная жрица", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Жрица" },
+            { name: "Императрица", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Императрица" },
+            { name: "Император", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Император" },
+            { name: "Верховный жрец", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Жрец" },
+            { name: "Влюбленные", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Влюбленные" },
+            { name: "Колесница", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Колесница" },
+            { name: "Сила", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Сила" },
+            { name: "Отшельник", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Отшельник" },
+            { name: "Колесо фортуны", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Колесо" },
+            { name: "Справедливость", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Справедливость" },
+            { name: "Повешенный", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Повешенный" },
+            { name: "Смерть", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Смерть" },
+            { name: "Умеренность", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Умеренность" },
+            { name: "Дьявол", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Дьявол" },
+            { name: "Башня", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Башня" },
+            { name: "Звезда", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Звезда" },
+            { name: "Луна", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Луна" },
+            { name: "Солнце", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Солнце" },
+            { name: "Суд", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Суд" },
+            { name: "Мир", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Мир" },
+            { name: "Туз жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Туз жезлов" },
+            { name: "Двойка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Двойка жезлов" },
+            { name: "Тройка жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Тройка жезлов" },
+            { name: "Четверка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=4 жезлов" },
+            { name: "Пятерка жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=5 жезлов" },
+            { name: "Шестёрка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=6 жезлов" },
+            { name: "Семёрка жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=7 жезлов" },
+            { name: "Восьмерка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=8 жезлов" },
+            { name: "Девятка жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=9 жезлов" },
+            { name: "Десятка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=10 жезлов" },
+            { name: "Туз кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Туз кубков" },
+            { name: "Двойка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Двойка кубков" },
+            { name: "Тройка кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Тройка кубков" },
+            { name: "Четверка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=4 кубков" },
+            { name: "Пятерка кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=5 кубков" },
+            { name: "Шестёрка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=6 кубков" },
+            { name: "Семёрка кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=7 кубков" },
+            { name: "Восьмерка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=8 кубков" },
+            { name: "Девятка кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=9 кубков" },
+            { name: "Десятка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=10 кубков" },
+            { name: "Туз мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Туз мечей" },
+            { name: "Двойка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Двойка мечей" },
+            { name: "Тройка мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Тройка мечей" },
+            { name: "Четверка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=4 мечей" },
+            { name: "Пятерка мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=5 мечей" },
+            { name: "Шестёрка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=6 мечей" },
+            { name: "Семёрка мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=7 мечей" },
+            { name: "Восьмерка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=8 мечей" },
+            { name: "Девятка мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=9 мечей" },
+            { name: "Десятка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=10 мечей" },
+            { name: "Туз пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Туз пентаклей" },
+            { name: "Двойка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Двойка пентаклей" },
+            { name: "Тройка пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Тройка пентаклей" },
+            { name: "Четверка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=4 пентаклей" },
+            { name: "Пятерка пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=5 пентаклей" },
+            { name: "Шестёрка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=6 пентаклей" },
+            { name: "Семёрка пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=7 пентаклей" },
+            { name: "Восьмерка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=8 пентаклей" },
+            { name: "Девятка пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=9 пентаклей" },
+            { name: "Десятка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=10 пентаклей" }
         ];
 
         let cardsCount = 1;
@@ -375,6 +370,12 @@
         let shuffledDeck = [];
         let telegramWebApp = null;
 
+        // Вспомогательная функция для расчета размера данных в байтах
+        function byteLength(str) {
+            // Возвращает размер строки в байтах (UTF-8)
+            return new Blob([str]).size;
+        }
+
         function init() {
             if (window.Telegram && window.Telegram.WebApp) {
                 telegramWebApp = window.Telegram.WebApp;
@@ -382,16 +383,23 @@
                 updateTelegramStatus(true);
                 telegramWebApp.expand();
                 telegramWebApp.MainButton.hide();
-                console.log('Telegram WebApp инициализирован');
+                
+                console.log('Telegram WebApp инициализирован, версия:', telegramWebApp.version);
+                
+                // Настраиваем обработчик для кнопки в Telegram
+                telegramWebApp.MainButton.onClick(sendResults);
             } else {
                 updateTelegramStatus(false);
-                console.log('Telegram WebApp не найден - режим демонстрации');
+                console.log('Telegram WebApp не найден - откройте приложение через Telegram');
             }
 
             const urlParams = new URLSearchParams(window.location.search);
             const cards = urlParams.get('cards');
             if (cards) {
                 cardsCount = parseInt(cards, 10);
+                if (isNaN(cardsCount) || cardsCount < 1) {
+                    cardsCount = 1;
+                }
             }
             updateUI();
             shuffleDeck();
@@ -407,8 +415,8 @@
                 footerElement.textContent = 'Данные будут отправлены в ваш бот';
             } else {
                 statusElement.className = 'telegram-status telegram-disconnected';
-                statusElement.textContent = '⚠️ Режим демонстрации (без Telegram)';
-                footerElement.textContent = 'Для работы с ботом откройте через Telegram';
+                statusElement.textContent = '⚠️ Откройте приложение через Telegram бота';
+                footerElement.textContent = 'Это приложение работает только внутри Telegram';
             }
         }
 
@@ -437,7 +445,6 @@
                 if (telegramWebApp) {
                     telegramWebApp.MainButton.setText('✨ Отправить результат');
                     telegramWebApp.MainButton.show();
-                    telegramWebApp.MainButton.onClick(sendResults);
                 }
             } else {
                 instruction.textContent = isDrawing ? 'Вытягиваем карту...' : 'Нажмите для вытягивания карты';
@@ -455,11 +462,12 @@
 
         function drawCard() {
             if (drawnCards.length >= cardsCount || isDrawing) return;
+            
             isDrawing = true;
             document.getElementById('loading').style.display = 'flex';
             updateUI();
 
-            if (telegramWebApp) {
+            if (telegramWebApp && telegramWebApp.HapticFeedback) {
                 telegramWebApp.HapticFeedback.impactOccurred('light');
             }
 
@@ -474,10 +482,11 @@
                     drawnCards.push(selectedCard);
                     displayDrawnCards();
 
-                    if (telegramWebApp) {
+                    if (telegramWebApp && telegramWebApp.HapticFeedback) {
                         telegramWebApp.HapticFeedback.impactOccurred('medium');
                     }
                 }
+                
                 isDrawing = false;
                 document.getElementById('loading').style.display = 'none';
                 updateUI();
@@ -496,7 +505,7 @@
                 cardElement.className = 'card';
                 cardElement.innerHTML = `
                     <img src="${lastCard.url}" alt="${lastCard.name}" class="card-image"
-                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzcyMDliNyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+🃏</dGV4dD48L3N2Zz4='">
+                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzcyMDliNyIvPjx0ZXh0IHg9Ijc1IiB5PSIxMDAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRleHQtZGVjb3JhdGlvbj0ibm9uZSI+Jm5ic3A7PC90ZXh0Pjwvc3ZnPg='">
                     <p class="card-name">${lastCard.name}</p>
                 `;
                 grid.appendChild(cardElement);
@@ -504,26 +513,58 @@
         }
 
         function sendResults() {
-            if (telegramWebApp) {
+            // Создаем объект данных для отправки
+            const dataToSend = {
+                drawnCards: drawnCards.map(card => card.name),
+                cardsCount: cardsCount,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Преобразуем в JSON строку
+            const dataString = JSON.stringify(dataToSend);
+            
+            // Проверяем данные перед отправкой, как в оригинальном коде Telegram
+            if (!dataString || !dataString.length) {
+                console.error('[Telegram.WebApp] Data is required', dataString);
+                alert('Ошибка: данные для отправки отсутствуют');
+                return;
+            }
+            
+            // Проверяем размер данных (не более 4096 байт)
+            const dataSize = byteLength(dataString);
+            if (dataSize > 4096) {
+                console.error('[Telegram.WebApp] Data is too long', dataString);
+                alert('Ошибка: данные слишком большие для отправки');
+                return;
+            }
+            
+            console.log('Отправляем данные в Telegram, размер:', dataSize, 'байт');
+            
+            // Вибрация для обратной связи
+            if (telegramWebApp && telegramWebApp.HapticFeedback) {
                 telegramWebApp.HapticFeedback.impactOccurred('heavy');
             }
-
-            if (telegramWebApp) {
-                const data = JSON.stringify({
-                    drawnCards: drawnCards,
-                    cardsCount: cardsCount,
-                    timestamp: new Date().toISOString()
-                });
-
-                console.log('Отправляем данные в Telegram:', data);
-                telegramWebApp.sendData(data);
-
-                setTimeout(() => {
-                    telegramWebApp.close();
-                }, 500);
+            
+            // Отправка данных через Telegram WebApp API
+            if (telegramWebApp && telegramWebApp.sendData) {
+                try {
+                    telegramWebApp.sendData(dataString);
+                    console.log('Данные успешно отправлены в бот');
+                    
+                    // Через 500ms закрываем приложение
+                    setTimeout(() => {
+                        if (telegramWebApp && telegramWebApp.close) {
+                            telegramWebApp.close();
+                        }
+                    }, 500);
+                    
+                } catch (error) {
+                    console.error('Ошибка при отправке данных:', error);
+                    alert('Ошибка при отправке данных: ' + error.message);
+                }
             } else {
-                const cardNames = drawnCards.map(card => card.name).join('\n');
-                alert(`Выбранные карты:\n${cardNames}\n\nВ реальном режиме данные отправятся в бот`);
+                console.error('Telegram WebApp не доступен для отправки данных');
+                alert('Telegram WebApp не доступен. Откройте приложение через Telegram бота.');
             }
         }
 
@@ -534,18 +575,13 @@
             shuffleDeck();
             updateUI();
 
-            if (telegramWebApp) {
+            if (telegramWebApp && telegramWebApp.HapticFeedback) {
                 telegramWebApp.HapticFeedback.impactOccurred('light');
             }
         }
 
+        // Инициализация при загрузке страницы
         window.addEventListener('load', init);
-
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.onEvent('mainButtonClicked', sendResults);
-        }
     </script>
 </body>
 </html>
-
-
