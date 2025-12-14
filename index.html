@@ -514,65 +514,14 @@
 
         function sendResults() {
             // Создаем объект данных для отправки
-            const dataToSend = {
+            let data = {
                 drawnCards: drawnCards.map(card => card.name),
                 cardsCount: cardsCount,
                 timestamp: new Date().toISOString()
             };
-        
-            // Преобразуем в JSON строку
-            const dataString = JSON.stringify(dataToSend);
+            tg.sendData(JSON.stringify(data));
+            tg.close;
             
-            console.log('Подготовлены данные для отправки:', dataToSend);
-            console.log('JSON строка:', dataString);
-            
-            // Проверяем данные перед отправкой, как в оригинальном коде Telegram
-            if (!dataString || !dataString.length) {
-                console.error('[Telegram.WebApp] Data is required', dataString);
-                alert('Ошибка: данные для отправки отсутствуют');
-                return;
-            }
-            
-            // Проверяем размер данных (не более 4096 байт)
-            const dataSize = byteLength(dataString);
-            if (dataSize > 4096) {
-                console.error('[Telegram.WebApp] Data is too long', dataString);
-                alert('Ошибка: данные слишком большие для отправки');
-                return;
-            }
-            
-            console.log('Отправляем данные в Telegram, размер:', dataSize, 'байт');
-            
-            // Вибрация для обратной связи
-            if (telegramWebApp && telegramWebApp.HapticFeedback) {
-                telegramWebApp.HapticFeedback.impactOccurred('heavy');
-            }
-            
-            // Отправка данных через Telegram WebApp API
-            if (telegramWebApp && telegramWebApp.sendData) {
-                try {
-                    console.log('Вызываем telegramWebApp.sendData()');
-                    telegramWebApp.sendData(dataString);
-                    console.log('Данные успешно отправлены в бот');
-                    
-                    // Через 1000ms закрываем приложение
-                    setTimeout(() => {
-                        if (telegramWebApp && telegramWebApp.close) {
-                            alert('Данные для отправки: ' + dataString);
-                            console.log('Закрываем WebApp');
-                            telegramWebApp.close();
-                        }
-                    }, 1000);
-                    
-                } catch (error) {
-                    console.error('Ошибка при отправке данных:', error);
-                    alert('Ошибка при отправке данных: ' + error.message);
-                }
-            } else {
-                console.error('Telegram WebApp не доступен для отправки данных');
-                alert('Telegram WebApp не доступен. Откройте приложение через Telegram бота.');
-            }
-        }
 
         function resetCards() {
             drawnCards = [];
@@ -591,5 +540,6 @@
     </script>
 </body>
 </html>
+
 
 
