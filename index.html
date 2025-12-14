@@ -519,9 +519,12 @@
                 cardsCount: cardsCount,
                 timestamp: new Date().toISOString()
             };
-            
+        
             // Преобразуем в JSON строку
             const dataString = JSON.stringify(dataToSend);
+            
+            console.log('Подготовлены данные для отправки:', dataToSend);
+            console.log('JSON строка:', dataString);
             
             // Проверяем данные перед отправкой, как в оригинальном коде Telegram
             if (!dataString || !dataString.length) {
@@ -548,15 +551,17 @@
             // Отправка данных через Telegram WebApp API
             if (telegramWebApp && telegramWebApp.sendData) {
                 try {
+                    console.log('Вызываем telegramWebApp.sendData()');
                     telegramWebApp.sendData(dataString);
                     console.log('Данные успешно отправлены в бот');
                     
-                    // Через 500ms закрываем приложение
+                    // Через 1000ms закрываем приложение
                     setTimeout(() => {
                         if (telegramWebApp && telegramWebApp.close) {
+                            console.log('Закрываем WebApp');
                             telegramWebApp.close();
                         }
-                    }, 500);
+                    }, 1000);
                     
                 } catch (error) {
                     console.error('Ошибка при отправке данных:', error);
@@ -585,3 +590,4 @@
     </script>
 </body>
 </html>
+
