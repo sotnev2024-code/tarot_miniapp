@@ -558,6 +558,7 @@
                     // Через 1000ms закрываем приложение
                     setTimeout(() => {
                         if (telegramWebApp && telegramWebApp.close) {
+                            alert('Данные для отправки: ' + dataString);
                             console.log('Закрываем WebApp');
                             telegramWebApp.close();
                         }
@@ -590,4 +591,5 @@
     </script>
 </body>
 </html>
+
 
