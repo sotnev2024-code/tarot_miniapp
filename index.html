@@ -3,39 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таро - Вытягивание карт</title>
+    <title>Таро - Отладка</title>
+    
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1a0b2e 0%, #16213e 50%, #7209b7 100%);
             min-height: 100vh;
             color: white;
             overflow-x: hidden;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
             padding: 1rem;
         }
+
+        .debug-panel {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #7209b7;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .debug-title {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .log-entry {
+            margin-bottom: 0.25rem;
+            padding: 0.25rem;
+            border-left: 2px solid #7209b7;
+            padding-left: 0.5rem;
+        }
+
+        .log-success { border-left-color: #22c55e; color: #22c55e; }
+        .log-error { border-left-color: #ef4444; color: #ef4444; }
+        .log-info { border-left-color: #3b82f6; color: #3b82f6; }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
         .header {
             text-align: center;
             margin-bottom: 2rem;
         }
+
         .title {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
+
         .subtitle {
             color: #e0b3ff;
             margin-bottom: 1rem;
         }
+
         .badge {
             display: inline-block;
             background: #7209b7;
@@ -44,14 +82,16 @@
             font-size: 0.875rem;
             font-weight: 500;
         }
+
         .deck-section {
             text-align: center;
             margin-bottom: 2rem;
         }
+
         .deck-card {
             display: inline-block;
-            width: 8rem;
-            height: 12rem;
+            width: 6rem;
+            height: 9rem;
             background: linear-gradient(135deg, #7209b7 0%, #16213e 100%);
             border: 2px solid #ffd700;
             border-radius: 0.5rem;
@@ -60,14 +100,16 @@
             position: relative;
             overflow: hidden;
         }
+
         .deck-card:hover {
             transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(114, 9, 183, 0.5);
         }
+
         .deck-card.disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
+
         .deck-card-back {
             width: 100%;
             height: 100%;
@@ -75,152 +117,88 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            position: relative;
+            font-size: 2rem;
         }
-        .deck-card-back::before {
-            content: '🌟';
-            position: absolute;
-            top: 10%;
-            left: 10%;
-            font-size: 1rem;
-            animation: twinkle 2s infinite;
-        }
-        .deck-card-back::after {
-            content: '✨';
-            position: absolute;
-            bottom: 10%;
-            right: 10%;
-            font-size: 1rem;
-            animation: twinkle 2s infinite 1s;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-        .loading {
-            position: absolute;
-            inset: 0;
-            background: rgba(114, 9, 183, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .spinner {
-            width: 2rem;
-            height: 2rem;
-            border: 2px solid transparent;
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .deck-instruction {
-            margin-top: 1rem;
-            font-size: 0.875rem;
-            color: #e0b3ff;
-        }
+
         .drawn-cards {
             margin-bottom: 2rem;
         }
-        .drawn-cards h2 {
-            text-align: center;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-        }
+
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
         }
+
         .card {
             background: linear-gradient(135deg, #16213e 0%, #7209b7 100%);
             border: 1px solid #7209b7;
             border-radius: 0.5rem;
-            padding: 0.75rem;
-            transition: all 0.3s ease;
-            animation: slideInUp 0.5s ease-out;
+            padding: 0.5rem;
+            text-align: center;
         }
-        .card:hover {
-            transform: scale(1.05);
-        }
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+
         .card-image {
             width: 100%;
-            height: 8rem;
+            height: 6rem;
             object-fit: cover;
             border-radius: 0.25rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #1a0b2e 0%, #7209b7 100%);
+            margin-bottom: 0.25rem;
         }
+
         .card-name {
-            text-align: center;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
         }
+
         .controls {
             display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
+            flex-direction: column;
+            gap: 0.5rem;
             margin-bottom: 2rem;
         }
+
         .btn {
-            padding: 0.75rem 2rem;
+            padding: 0.75rem 1rem;
             border: none;
             border-radius: 0.5rem;
-            font-size: 1rem;
+            font-size: 0.875rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
         }
+
         .btn-primary {
             background: #7209b7;
             color: white;
         }
+
         .btn-primary:hover {
             background: #8b2fc7;
         }
+
         .btn-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
+
         .btn-gold {
             background: #ffd700;
             color: #1a0b2e;
             font-weight: 600;
         }
-        .btn-gold:hover {
-            background: #ffed4e;
-        }
+
         .btn-outline {
             background: transparent;
             color: #e0b3ff;
             border: 1px solid #7209b7;
         }
+
         .btn-outline:hover {
             background: #7209b7;
             color: white;
         }
-        .footer {
-            text-align: center;
-            color: #b19cd9;
-            font-size: 0.875rem;
-            margin-top: 2rem;
-        }
+
         .telegram-status {
             text-align: center;
             padding: 0.5rem;
@@ -228,200 +206,154 @@
             border-radius: 0.5rem;
             font-size: 0.875rem;
         }
+
         .telegram-connected {
             background: rgba(34, 197, 94, 0.2);
             color: #22c55e;
             border: 1px solid #22c55e;
         }
+
         .telegram-disconnected {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
             border: 1px solid #ef4444;
         }
-        @media (max-width: 640px) {
-            .title {
-                font-size: 1.5rem;
-            }
-            .deck-card {
-                width: 6rem;
-                height: 9rem;
-            }
-            .controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            .btn {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="telegramStatus" class="telegram-status telegram-disconnected">
-            🔗 Подключение к Telegram...
+        <!-- Панель отладки -->
+        <div class="debug-panel">
+            <div class="debug-title">🔍 Отладочная информация:</div>
+            <div id="debugLog"></div>
         </div>
+
+        <!-- Статус Telegram -->
+        <div id="telegramStatus" class="telegram-status telegram-disconnected">
+            🔗 Проверяем Telegram...
+        </div>
+
+        <!-- Заголовок -->
         <div class="header">
-            <h1 class="title">🃏 Вытягивание карт Таро</h1>
-            <p class="subtitle" id="subtitle">Нужно вытянуть карты</p>
+            <h1 class="title">🃏 Таро - Отладка</h1>
+            <p class="subtitle" id="subtitle">Тестируем отправку данных</p>
             <div class="badge" id="badge">Выбрано: 0 / 1</div>
         </div>
+
+        <!-- Колода карт -->
         <div class="deck-section">
             <div class="deck-card" id="deckCard" onclick="drawCard()">
-                <div class="deck-card-back">
-                    🔮
-                </div>
-                <div class="loading" id="loading" style="display: none;">
-                    <div class="spinner"></div>
-                </div>
+                <div class="deck-card-back">🔮</div>
             </div>
-            <p class="deck-instruction" id="instruction">Нажмите для вытягивания карты</p>
+            <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #e0b3ff;" id="instruction">
+                Нажмите для вытягивания карты
+            </p>
         </div>
+
+        <!-- Вытянутые карты -->
         <div class="drawn-cards" id="drawnCardsSection" style="display: none;">
-            <h2>Ваши карты:</h2>
+            <h3 style="text-align: center; margin-bottom: 1rem;">Ваши карты:</h3>
             <div class="cards-grid" id="cardsGrid"></div>
         </div>
+
+        <!-- Кнопки управления -->
         <div class="controls">
             <button class="btn btn-primary" id="drawBtn" onclick="drawCard()">
                 Вытянуть карту
             </button>
             <button class="btn btn-gold" id="sendBtn" onclick="sendResults()" style="display: none;">
-                ✨ Отправить результат
+                📤 Отправить через sendData
+            </button>
+            <button class="btn btn-outline" onclick="sendViaMainButton()">
+                🎯 Отправить через MainButton
+            </button>
+            <button class="btn btn-outline" onclick="sendViaPostMessage()">
+                📡 Отправить через postMessage
             </button>
             <button class="btn btn-outline" onclick="resetCards()">
-                🔄 Начать заново
+                🔄 Сброс
             </button>
         </div>
-        <div class="footer">
-            <p id="footerText">Приложение готово к работе с Telegram Bot</p>
-        </div>
     </div>
+
     <script>
-        // Полный список карт Таро
+        // Список карт (сокращенный для тестирования)
         const tarotCards = [
-            { name: "Шут", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Шут" },
-            { name: "Маг", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Маг" },
-            { name: "Верховная жрица", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Жрица" },
-            { name: "Императрица", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Императрица" },
-            { name: "Император", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Император" },
-            { name: "Верховный жрец", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Жрец" },
-            { name: "Влюбленные", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Влюбленные" },
-            { name: "Колесница", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Колесница" },
-            { name: "Сила", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Сила" },
-            { name: "Отшельник", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Отшельник" },
-            { name: "Колесо фортуны", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Колесо" },
-            { name: "Справедливость", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Справедливость" },
-            { name: "Повешенный", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Повешенный" },
-            { name: "Смерть", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Смерть" },
-            { name: "Умеренность", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Умеренность" },
-            { name: "Дьявол", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Дьявол" },
-            { name: "Башня", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Башня" },
-            { name: "Звезда", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Звезда" },
-            { name: "Луна", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Луна" },
-            { name: "Солнце", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Солнце" },
-            { name: "Суд", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Суд" },
-            { name: "Мир", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Мир" },
-            { name: "Туз жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Туз жезлов" },
-            { name: "Двойка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Двойка жезлов" },
-            { name: "Тройка жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Тройка жезлов" },
-            { name: "Четверка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=4 жезлов" },
-            { name: "Пятерка жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=5 жезлов" },
-            { name: "Шестёрка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=6 жезлов" },
-            { name: "Семёрка жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=7 жезлов" },
-            { name: "Восьмерка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=8 жезлов" },
-            { name: "Девятка жезлов", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=9 жезлов" },
-            { name: "Десятка жезлов", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=10 жезлов" },
-            { name: "Туз кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Туз кубков" },
-            { name: "Двойка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Двойка кубков" },
-            { name: "Тройка кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Тройка кубков" },
-            { name: "Четверка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=4 кубков" },
-            { name: "Пятерка кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=5 кубков" },
-            { name: "Шестёрка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=6 кубков" },
-            { name: "Семёрка кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=7 кубков" },
-            { name: "Восьмерка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=8 кубков" },
-            { name: "Девятка кубков", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=9 кубков" },
-            { name: "Десятка кубков", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=10 кубков" },
-            { name: "Туз мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Туз мечей" },
-            { name: "Двойка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Двойка мечей" },
-            { name: "Тройка мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Тройка мечей" },
-            { name: "Четверка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=4 мечей" },
-            { name: "Пятерка мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=5 мечей" },
-            { name: "Шестёрка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=6 мечей" },
-            { name: "Семёрка мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=7 мечей" },
-            { name: "Восьмерка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=8 мечей" },
-            { name: "Девятка мечей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=9 мечей" },
-            { name: "Десятка мечей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=10 мечей" },
-            { name: "Туз пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Туз пентаклей" },
-            { name: "Двойка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=Двойка пентаклей" },
-            { name: "Тройка пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=Тройка пентаклей" },
-            { name: "Четверка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=4 пентаклей" },
-            { name: "Пятерка пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=5 пентаклей" },
-            { name: "Шестёрка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=6 пентаклей" },
-            { name: "Семёрка пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=7 пентаклей" },
-            { name: "Восьмерка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=8 пентаклей" },
-            { name: "Девятка пентаклей", url: "https://via.placeholder.com/150x200/7209b7/ffffff?text=9 пентаклей" },
-            { name: "Десятка пентаклей", url: "https://via.placeholder.com/150x200/16213e/ffffff?text=10 пентаклей" }
+            { name: "Маг", url: "https://a.plus-shop.ru/cards/Mag.JPG" },
+            { name: "Башня", url: "/images/photo1765560165.jpg" },
+            { name: "Влюбленные", url: "/images/Lovers.jpg" },
+            { name: "Императрица", url: "https://a.plus-shop.ru/cards/Imperatritsa.JPG" },
+            { name: "Император", url: "https://a.plus-shop.ru/cards/Imperator.JPG" }
         ];
 
+        // Глобальные переменные
         let cardsCount = 1;
         let drawnCards = [];
-        let isDrawing = false;
-        let shuffledDeck = [];
         let telegramWebApp = null;
 
-        // Вспомогательная функция для расчета размера данных в байтах
-        function byteLength(str) {
-            // Возвращает размер строки в байтах (UTF-8)
-            return new Blob([str]).size;
+        // Функция логирования
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('debugLog');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
         }
 
+        // Инициализация
         function init() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                telegramWebApp = window.Telegram.WebApp;
-                telegramWebApp.ready();
-                updateTelegramStatus(true);
-                telegramWebApp.expand();
-                telegramWebApp.MainButton.hide();
-                
-                console.log('Telegram WebApp инициализирован, версия:', telegramWebApp.version);
-                
-                // Настраиваем обработчик для кнопки в Telegram
-                telegramWebApp.MainButton.onClick(sendResults);
-            } else {
-                updateTelegramStatus(false);
-                console.log('Telegram WebApp не найден - откройте приложение через Telegram');
-            }
-
+            addLog('🚀 Инициализация приложения', 'info');
+            
+            // Получаем количество карт из URL
             const urlParams = new URLSearchParams(window.location.search);
             const cards = urlParams.get('cards');
             if (cards) {
                 cardsCount = parseInt(cards, 10);
-                if (isNaN(cardsCount) || cardsCount < 1) {
-                    cardsCount = 1;
-                }
+                addLog(`📊 Количество карт из URL: ${cardsCount}`, 'info');
             }
+
+            // Проверяем Telegram WebApp
+            if (window.Telegram && window.Telegram.WebApp) {
+                telegramWebApp = window.Telegram.WebApp;
+                addLog('✅ Telegram WebApp найден', 'success');
+                
+                try {
+                    telegramWebApp.ready();
+                    addLog('✅ WebApp.ready() выполнен', 'success');
+                    
+                    telegramWebApp.expand();
+                    addLog('✅ WebApp.expand() выполнен', 'success');
+                    
+                    updateTelegramStatus(true);
+                    
+                    // Логируем информацию о WebApp
+                    addLog(`📱 Версия: ${telegramWebApp.version}`, 'info');
+                    addLog(`👤 Пользователь: ${telegramWebApp.initDataUnsafe?.user?.first_name || 'неизвестно'}`, 'info');
+                    addLog(`🎨 Тема: ${telegramWebApp.colorScheme}`, 'info');
+                    
+                } catch (e) {
+                    addLog(`❌ Ошибка инициализации Telegram: ${e.message}`, 'error');
+                }
+            } else {
+                addLog('❌ Telegram WebApp не найден', 'error');
+                updateTelegramStatus(false);
+            }
+
             updateUI();
-            shuffleDeck();
         }
 
         function updateTelegramStatus(connected) {
             const statusElement = document.getElementById('telegramStatus');
-            const footerElement = document.getElementById('footerText');
-
+            
             if (connected) {
                 statusElement.className = 'telegram-status telegram-connected';
                 statusElement.textContent = '✅ Подключено к Telegram';
-                footerElement.textContent = 'Данные будут отправлены в ваш бот';
             } else {
                 statusElement.className = 'telegram-status telegram-disconnected';
-                statusElement.textContent = '⚠️ Откройте приложение через Telegram бота';
-                footerElement.textContent = 'Это приложение работает только внутри Telegram';
+                statusElement.textContent = '❌ Telegram не найден';
             }
-        }
-
-        function shuffleDeck() {
-            shuffledDeck = [...tarotCards].sort(() => Math.random() - 0.5);
         }
 
         function updateUI() {
@@ -430,67 +362,50 @@
             const instruction = document.getElementById('instruction');
             const drawBtn = document.getElementById('drawBtn');
             const sendBtn = document.getElementById('sendBtn');
-            const deckCard = document.getElementById('deckCard');
 
-            const cardWord = cardsCount === 1 ? 'карту' : cardsCount < 5 ? 'карты' : 'карт';
-            subtitle.textContent = `Нужно вытянуть ${cardsCount} ${cardWord}`;
+            subtitle.textContent = `Нужно вытянуть ${cardsCount} карт`;
             badge.textContent = `Выбрано: ${drawnCards.length} / ${cardsCount}`;
 
             if (drawnCards.length >= cardsCount) {
-                instruction.textContent = 'Все карты вытянуты';
+                instruction.textContent = 'Все карты вытянуты - можно отправлять';
                 drawBtn.style.display = 'none';
-                sendBtn.style.display = 'inline-block';
-                deckCard.classList.add('disabled');
-
+                sendBtn.style.display = 'block';
+                
                 if (telegramWebApp) {
-                    telegramWebApp.MainButton.setText('✨ Отправить результат');
+                    telegramWebApp.MainButton.setText('📤 Отправить результат');
                     telegramWebApp.MainButton.show();
+                    telegramWebApp.MainButton.onClick(sendResults);
+                    addLog('✅ MainButton настроена', 'success');
                 }
             } else {
-                instruction.textContent = isDrawing ? 'Вытягиваем карту...' : 'Нажмите для вытягивания карты';
-                drawBtn.style.display = 'inline-block';
+                instruction.textContent = 'Нажмите для вытягивания карты';
+                drawBtn.style.display = 'block';
                 sendBtn.style.display = 'none';
-                deckCard.classList.remove('disabled');
-
+                
                 if (telegramWebApp) {
                     telegramWebApp.MainButton.hide();
                 }
             }
-            drawBtn.disabled = isDrawing || drawnCards.length >= cardsCount;
-            drawBtn.textContent = isDrawing ? 'Вытягиваем...' : 'Вытянуть карту';
         }
 
         function drawCard() {
-            if (drawnCards.length >= cardsCount || isDrawing) return;
+            if (drawnCards.length >= cardsCount) return;
+
+            addLog('🎯 Вытягиваем карту...', 'info');
             
-            isDrawing = true;
-            document.getElementById('loading').style.display = 'flex';
-            updateUI();
+            const availableCards = tarotCards.filter(
+                card => !drawnCards.some(drawn => drawn.name === card.name)
+            );
 
-            if (telegramWebApp && telegramWebApp.HapticFeedback) {
-                telegramWebApp.HapticFeedback.impactOccurred('light');
-            }
-
-            setTimeout(() => {
-                const availableCards = shuffledDeck.filter(
-                    card => !drawnCards.some(drawn => drawn.name === card.name)
-                );
-
-                if (availableCards.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * availableCards.length);
-                    const selectedCard = availableCards[randomIndex];
-                    drawnCards.push(selectedCard);
-                    displayDrawnCards();
-
-                    if (telegramWebApp && telegramWebApp.HapticFeedback) {
-                        telegramWebApp.HapticFeedback.impactOccurred('medium');
-                    }
-                }
+            if (availableCards.length > 0) {
+                const randomIndex = Math.floor(Math.random() * availableCards.length);
+                const selectedCard = availableCards[randomIndex];
+                drawnCards.push(selectedCard);
                 
-                isDrawing = false;
-                document.getElementById('loading').style.display = 'none';
+                addLog(`🃏 Вытянута карта: ${selectedCard.name}`, 'success');
+                displayDrawnCards();
                 updateUI();
-            }, 1000);
+            }
         }
 
         function displayDrawnCards() {
@@ -499,49 +414,120 @@
 
             if (drawnCards.length > 0) {
                 section.style.display = 'block';
-
+                
                 const lastCard = drawnCards[drawnCards.length - 1];
                 const cardElement = document.createElement('div');
                 cardElement.className = 'card';
                 cardElement.innerHTML = `
-                    <img src="${lastCard.url}" alt="${lastCard.name}" class="card-image"
-                         onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTUwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzcyMDliNyIvPjx0ZXh0IHg9Ijc1IiB5PSIxMDAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHRleHQtZGVjb3JhdGlvbj0ibm9uZSI+Jm5ic3A7PC90ZXh0Pjwvc3ZnPg='">
+                    <img src="${lastCard.url}" alt="${lastCard.name}" class="card-image" 
+                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzcyMDliNyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+🃏</dGV4dD48L3N2Zz4='">
                     <p class="card-name">${lastCard.name}</p>
                 `;
                 grid.appendChild(cardElement);
             }
         }
 
+        // Основной способ отправки
         function sendResults() {
-            // Создаем объект данных для отправки
-            let data = {
-                drawnCards: drawnCards.map(card => card.name),
-                cardsCount: cardsCount,
-                timestamp: new Date().toISOString()
-            };
-            tg.sendData(JSON.stringify(data));
-            alert(data);
-            tg.close;
+            addLog('📤 Попытка отправки через sendData...', 'info');
             
+            const data = {
+                drawnCards: drawnCards,
+                cardsCount: cardsCount,
+                timestamp: new Date().toISOString(),
+                method: 'sendData'
+            };
+            
+            addLog(`📦 Данные для отправки: ${JSON.stringify(data)}`, 'info');
+
+            if (telegramWebApp) {
+                try {
+                    const dataString = JSON.stringify(data);
+                    addLog(`📡 Отправляем строку: ${dataString}`, 'info');
+                    
+                    telegramWebApp.sendData(dataString);
+                    addLog('✅ sendData() выполнен успешно', 'success');
+                    
+                    setTimeout(() => {
+                        addLog('🔄 Закрываем приложение...', 'info');
+                        telegramWebApp.close();
+                    }, 1000);
+                    
+                } catch (e) {
+                    addLog(`❌ Ошибка sendData: ${e.message}`, 'error');
+                }
+            } else {
+                addLog('❌ Telegram WebApp недоступен', 'error');
+                alert(`Результат:\n${drawnCards.map(c => c.name).join('\n')}`);
+            }
+        }
+
+        // Альтернативный способ через MainButton
+        function sendViaMainButton() {
+            addLog('🎯 Попытка отправки через MainButton...', 'info');
+            
+            if (telegramWebApp && telegramWebApp.MainButton) {
+                try {
+                    telegramWebApp.MainButton.setText('Отправляем...');
+                    telegramWebApp.MainButton.showProgress();
+                    
+                    const data = {
+                        drawnCards: drawnCards,
+                        cardsCount: cardsCount,
+                        method: 'mainButton'
+                    };
+                    
+                    telegramWebApp.sendData(JSON.stringify(data));
+                    addLog('✅ Отправка через MainButton', 'success');
+                    
+                } catch (e) {
+                    addLog(`❌ Ошибка MainButton: ${e.message}`, 'error');
+                }
+            } else {
+                addLog('❌ MainButton недоступна', 'error');
+            }
+        }
+
+        // Альтернативный способ через postMessage
+        function sendViaPostMessage() {
+            addLog('📡 Попытка отправки через postMessage...', 'info');
+            
+            const data = {
+                drawnCards: drawnCards,
+                cardsCount: cardsCount,
+                method: 'postMessage'
+            };
+            
+            try {
+                window.parent.postMessage(JSON.stringify(data), '*');
+                addLog('✅ postMessage отправлен', 'success');
+            } catch (e) {
+                addLog(`❌ Ошибка postMessage: ${e.message}`, 'error');
+            }
+        }
 
         function resetCards() {
             drawnCards = [];
             document.getElementById('cardsGrid').innerHTML = '';
             document.getElementById('drawnCardsSection').style.display = 'none';
-            shuffleDeck();
             updateUI();
-
-            if (telegramWebApp && telegramWebApp.HapticFeedback) {
-                telegramWebApp.HapticFeedback.impactOccurred('light');
-            }
+            addLog('🔄 Карты сброшены', 'info');
         }
 
-        // Инициализация при загрузке страницы
+        // Запуск при загрузке
         window.addEventListener('load', init);
+
+        // Обработка событий Telegram
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.onEvent('mainButtonClicked', () => {
+                addLog('🎯 MainButton нажата', 'info');
+                sendResults();
+            });
+            
+            window.Telegram.WebApp.onEvent('themeChanged', () => {
+                addLog('🎨 Тема изменена', 'info');
+            });
+        }
     </script>
 </body>
 </html>
-
-
-
-
