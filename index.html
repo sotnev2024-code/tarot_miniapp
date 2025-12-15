@@ -348,75 +348,161 @@
         
         // ==== Список всех карт ====
         const tarotCards = [
-            { name:"Башня", url:"https://a.plus-shop.ru/cards/Bashnja.JPG" },
-            { name:"Верховный жрец", url:"https://a.plus-shop.ru/cards/Verhovnyj_zhrets.JPG" },
-            { name:"Влюбленные", url:"https://a.plus-shop.ru/cards/Vljublennye.JPG" },
-            { name:"Восьмерка жезлов", url:"https://a.plus-shop.ru/cards/Vos'merka_zhezlov.JPG" },
-            { name:"Восьмерка кубков", url:"https://a.plus-shop.ru/cards/Vos'merka_kubkov.JPG" },
-            { name:"Восьмерка мечей", url:"https://a.plus-shop.ru/cards/Vos'merka_mechej.JPG" },
-            { name:"Восьмерка пентаклей", url:"https://a.plus-shop.ru/cards/Vos'merka_pentaklej.JPG" },
-            { name:"Двойка жезлов", url:"https://a.plus-shop.ru/cards/Dvojka_zhezlov.JPG" },
-            { name:"Двойка кубков", url:"https://a.plus-shop.ru/cards/Dvojka_kubkov.JPG" },
-            { name:"Двойка мечей", url:"https://a.plus-shop.ru/cards/Dvojka_mechej.JPG" },
-            { name:"Двойка пентаклей", url:"https://a.plus-shop.ru/cards/Dvojka_pentaklej.JPG" },
-            { name:"Тройка жезлов", url:"https://a.plus-shop.ru/cards/Trojka_zhezlov.JPG" },
-            { name:"Тройка кубков", url:"https://a.plus-shop.ru/cards/Trojka_kubkov.JPG" },
-            { name:"Тройка мечей", url:"https://a.plus-shop.ru/cards/Trojka_mechej.JPG" },
-            { name:"Тройка пентаклей", url:"https://a.plus-shop.ru/cards/Trojka_pentaklej.JPG" },
-            { name:"Четверка жезлов", url:"https://a.plus-shop.ru/cards/Chetverka_zhezlov.JPG" },
-            { name:"Четверка кубков", url:"https://a.plus-shop.ru/cards/Chetverka_kubkov.JPG" },
-            { name:"Четверка мечей", url:"https://a.plus-shop.ru/cards/Chetverka_mechej.JPG" },
-            { name:"Четверка пентаклей", url:"https://a.plus-shop.ru/cards/Chetverka_pentaklej.JPG" },
-            { name:"Пятерка жезлов", url:"https://a.plus-shop.ru/cards/Pjaterka_zhezlov.JPG" },
-            { name:"Пятерка кубков", url:"https://a.plus-shop.ru/cards/Pjaterka_kubkov.JPG" },
-            { name:"Пятерка мечей", url:"https://a.plus-shop.ru/cards/Pjaterka_mechej.JPG" },
-            { name:"Пятерка пентаклей", url:"https://a.plus-shop.ru/cards/Pjaterka_pentaklej.JPG" },
-            { name:"Шестёрка жезлов", url:"https://a.plus-shop.ru/cards/Shesterka_zhezlov.JPG" },
-            { name:"Шестёрка кубков", url:"https://a.plus-shop.ru/cards/Shesterka_kubkov.JPG" },
-            { name:"Шестёрка мечей", url:"https://a.plus-shop.ru/cards/Shesterka_mechej.JPG" },
-            { name:"Шестёрка пентаклей", url:"https://a.plus-shop.ru/cards/Shesterka_pentaklej.JPG" },
-            { name:"Семёрка жезлов", url:"https://a.plus-shop.ru/cards/Semerka_zhezlov.JPG" },
-            { name:"Семёрка кубков", url:"https://a.plus-shop.ru/cards/Semerka_kubkov.JPG" },
-            { name:"Семёрка мечей", url:"https://a.plus-shop.ru/cards/Semerka_mechej.JPG" },
-            { name:"Семёрка пентаклей", url:"https://a.plus-shop.ru/cards/Semerka_pentaklej.JPG" },
-            { name:"Девятка жезлов", url:"https://a.plus-shop.ru/cards/Devjatka_zhezlov.JPG" },
-            { name:"Девятка кубков", url:"https://a.plus-shop.ru/cards/Devjatka_kubkov.JPG" },
-            { name:"Девятка мечей", url:"https://a.plus-shop.ru/cards/Devjatka_mechej.JPG" },
-            { name:"Девятка пентаклей", url:"https://a.plus-shop.ru/cards/Devjatka_pentaklej.JPG" },
-            { name:"Десятка жезлов", url:"https://a.plus-shop.ru/cards/Desjatka_zhezlov.JPG" },
-            { name:"Десятка кубков", url:"https://a.plus-shop.ru/cards/Desjatka_kubkov.JPG" },
-            { name:"Десятка мечей", url:"https://a.plus-shop.ru/cards/Desjatka_mechej.JPG" },
-            { name:"Десятка пентаклей", url:"https://a.plus-shop.ru/cards/Desjatka_pentaklej.JPG" },
-            { name:"Паж жезлов", url:"https://a.plus-shop.ru/cards/Pazh_zhezlov.JPG" },
-            { name:"Паж кубков", url:"https://a.plus-shop.ru/cards/Pazh_kubkov.JPG" },
-            { name:"Паж мечей", url:"https://a.plus-shop.ru/cards/Pazh_mechej.JPG" },
-            { name:"Паж пентаклей", url:"https://a.plus-shop.ru/cards/Pazh_pentaklej.JPG" },
-            { name:"Рыцарь жезлов", url:"https://a.plus-shop.ru/cards/Rytsar'_zhezlov.JPG" },
-            { name:"Рыцарь кубков", url:"https://a.plus-shop.ru/cards/Rytsar'_kubkov.JPG" },
-            { name:"Рыцарь мечей", url:"https://a.plus-shop.ru/cards/Rytsar'_mechej.JPG" },
-            { name:"Рыцарь пентаклей", url:"https://a.plus-shop.ru/cards/Rytsar'_pentaklej.JPG" },
-            { name:"Королева жезлов", url:"https://a.plus-shop.ru/cards/Koroleva_zhezlov.JPG" },
-            { name:"Королева кубков", url:"https://a.plus-shop.ru/cards/Koroleva_kubkov.JPG" },
-            { name:"Королева мечей", url:"https://a.plus-shop.ru/cards/Koroleva_mechej.JPG" },
-            { name:"Королева пентаклей", url:"https://a.plus-shop.ru/cards/Koroleva_pentaklej.JPG" },
-            { name:"Король жезлов", url:"https://a.plus-shop.ru/cards/Korol'_zhezlov.JPG" },
-            { name:"Король кубков", url:"https://a.plus-shop.ru/cards/Korol'_kubkov.JPG" },
-            { name:"Король мечей", url:"https://a.plus-shop.ru/cards/Korol'_mechej.JPG" },
-            { name:"Король пентаклей", url:"https://a.plus-shop.ru/cards/Korol'_pentaklej.JPG" },
-            { name:"Императрица", url:"https://a.plus-shop.ru/cards/Imperatritsa.JPG" },
-            { name:"Император", url:"https://a.plus-shop.ru/cards/Imperator.JPG" },
-            { name:"Маг", url:"https://a.plus-shop.ru/cards/Mag.JPG" },
-            { name:"Жрица", url:"https://a.plus-shop.ru/cards/Zhritsa.JPG" },
-            { name:"Звезда", url:"https://a.plus-shop.ru/cards/Zvezda.JPG" },
-            { name:"Луна", url:"https://a.plus-shop.ru/cards/Luna.JPG" },
-            { name:"Солнце", url:"https://a.plus-shop.ru/cards/Solntse.JPG" },
-            { name:"Суд", url:"https://a.plus-shop.ru/cards/Sud.JPG" },
-            { name:"Мир", url:"https://a.plus-shop.ru/cards/Mir.JPG" },
-            { name:"Умеренность", url:"https://a.plus-shop.ru/cards/Umerennost'.JPG" },
-            { name:"Повешенный", url:"https://a.plus-shop.ru/cards/Poveshennyj.JPG" },
-            { name:"Смерть", url:"https://a.plus-shop.ru/cards/Smert'.JPG" },
-            { name:"Дьявол", url:"https://a.plus-shop.ru/cards/D'javol.JPG" },
-            { name:"Шут", url:"https://a.plus-shop.ru/cards/shut.JPG" }
+            { "name": "Bashnya", "filename": "Bashnya.JPG", "url": "/cards/Bashnya.JPG" }
+    ,
+    { "name": "Chetverka kubkov", "filename": "Chetverka_kubkov.JPG", "url": "/cards/Chetverka_kubkov.JPG" }
+    ,
+    { "name": "Chetverka mechej", "filename": "Chetverka_mechej.JPG", "url": "/cards/Chetverka_mechej.JPG" }
+    ,
+    { "name": "Chetverka pentaklej", "filename": "Chetverka_pentaklej.JPG", "url": "/cards/Chetverka_pentaklej.JPG" }
+    ,
+    { "name": "Chetverka zhezlov", "filename": "Chetverka_zhezlov.JPG", "url": "/cards/Chetverka_zhezlov.JPG" }
+    ,
+    { "name": "Desyatka kubkov", "filename": "Desyatka_kubkov.JPG", "url": "/cards/Desyatka_kubkov.JPG" }
+    ,
+    { "name": "Desyatka mechej", "filename": "Desyatka_mechej.JPG", "url": "/cards/Desyatka_mechej.JPG" }
+    ,
+    { "name": "Desyatka pentaklej", "filename": "Desyatka_pentaklej.JPG", "url": "/cards/Desyatka_pentaklej.JPG" }
+    ,
+    { "name": "Desyatka zhezlov", "filename": "Desyatka_zhezlov.JPG", "url": "/cards/Desyatka_zhezlov.JPG" }
+    ,
+    { "name": "Devyatka kubkov", "filename": "Devyatka_kubkov.JPG", "url": "/cards/Devyatka_kubkov.JPG" }
+    ,
+    { "name": "Devyatka mechej", "filename": "Devyatka_mechej.JPG", "url": "/cards/Devyatka_mechej.JPG" }
+    ,
+    { "name": "Devyatka pentaklej", "filename": "Devyatka_pentaklej.JPG", "url": "/cards/Devyatka_pentaklej.JPG" }
+    ,
+    { "name": "Devyatka zhezlov", "filename": "Devyatka_zhezlov.JPG", "url": "/cards/Devyatka_zhezlov.JPG" }
+    ,
+    { "name": "Dvojka kubkov", "filename": "Dvojka_kubkov.JPG", "url": "/cards/Dvojka_kubkov.JPG" }
+    ,
+    { "name": "Dvojka mechej", "filename": "Dvojka_mechej.JPG", "url": "/cards/Dvojka_mechej.JPG" }
+    ,
+    { "name": "Dvojka pentaklej", "filename": "Dvojka_pentaklej.JPG", "url": "/cards/Dvojka_pentaklej.JPG" }
+    ,
+    { "name": "Dvojka zhezlov", "filename": "Dvojka_zhezlov.JPG", "url": "/cards/Dvojka_zhezlov.JPG" }
+    ,
+    { "name": "Dyavol", "filename": "Dyavol.JPG", "url": "/cards/Dyavol.JPG" }
+    ,
+    { "name": "Imperator", "filename": "Imperator.JPG", "url": "/cards/Imperator.JPG" }
+    ,
+    { "name": "Imperatritsa", "filename": "Imperatritsa.JPG", "url": "/cards/Imperatritsa.JPG" }
+    ,
+    { "name": "Kolesnitsa", "filename": "Kolesnitsa.JPG", "url": "/cards/Kolesnitsa.JPG" }
+    ,
+    { "name": "Koleso fortuny", "filename": "Koleso_fortuny.JPG", "url": "/cards/Koleso_fortuny.JPG" }
+    ,
+    { "name": "Koroleva kubkov", "filename": "Koroleva_kubkov.JPG", "url": "/cards/Koroleva_kubkov.JPG" }
+    ,
+    { "name": "Koroleva mechej", "filename": "Koroleva_mechej.JPG", "url": "/cards/Koroleva_mechej.JPG" }
+    ,
+    { "name": "Koroleva pentaklej", "filename": "Koroleva_pentaklej.JPG", "url": "/cards/Koroleva_pentaklej.JPG" }
+    ,
+    { "name": "Koroleva zhezlov", "filename": "Koroleva_zhezlov.JPG", "url": "/cards/Koroleva_zhezlov.JPG" }
+    ,
+    { "name": "Korol kubkov", "filename": "Korol_kubkov.JPG", "url": "/cards/Korol_kubkov.JPG" }
+    ,
+    { "name": "Korol mechej", "filename": "Korol_mechej.JPG", "url": "/cards/Korol_mechej.JPG" }
+    ,
+    { "name": "Korol pentaklej", "filename": "Korol_pentaklej.JPG", "url": "/cards/Korol_pentaklej.JPG" }
+    ,
+    { "name": "Korol zhezlov", "filename": "Korol_zhezlov.JPG", "url": "/cards/Korol_zhezlov.JPG" }
+    ,
+    { "name": "Luna", "filename": "Luna.JPG", "url": "/cards/Luna.JPG" }
+    ,
+    { "name": "Mag", "filename": "Mag.JPG", "url": "/cards/Mag.JPG" }
+    ,
+    { "name": "Mir", "filename": "Mir.JPG", "url": "/cards/Mir.JPG" }
+    ,
+    { "name": "Otshelnik", "filename": "Otshelnik.JPG", "url": "/cards/Otshelnik.JPG" }
+    ,
+    { "name": "Pazh kubkov", "filename": "Pazh_kubkov.JPG", "url": "/cards/Pazh_kubkov.JPG" }
+    ,
+    { "name": "Pazh mechej", "filename": "Pazh_mechej.JPG", "url": "/cards/Pazh_mechej.JPG" }
+    ,
+    { "name": "Pazh pentaklej", "filename": "Pazh_pentaklej.JPG", "url": "/cards/Pazh_pentaklej.JPG" }
+    ,
+    { "name": "Pazh zhezlov", "filename": "Pazh_zhezlov.JPG", "url": "/cards/Pazh_zhezlov.JPG" }
+    ,
+    { "name": "Pjaterka kubkov", "filename": "Pjaterka_kubkov.JPG", "url": "/cards/Pjaterka_kubkov.JPG" }
+    ,
+    { "name": "Pjaterka mechej", "filename": "Pjaterka_mechej.JPG", "url": "/cards/Pjaterka_mechej.JPG" }
+    ,
+    { "name": "Pjaterka pentaklej", "filename": "Pjaterka_pentaklej.JPG", "url": "/cards/Pjaterka_pentaklej.JPG" }
+    ,
+    { "name": "Pjaterka zhezlov", "filename": "Pjaterka_zhezlov.JPG", "url": "/cards/Pjaterka_zhezlov.JPG" }
+    ,
+    { "name": "Poveshennyj", "filename": "Poveshennyj.JPG", "url": "/cards/Poveshennyj.JPG" }
+    ,
+    { "name": "Pravosudie", "filename": "Pravosudie.JPG", "url": "/cards/Pravosudie.JPG" }
+    ,
+    { "name": "Rytsar kubkov", "filename": "Rytsar_kubkov.JPG", "url": "/cards/Rytsar_kubkov.JPG" }
+    ,
+    { "name": "Rytsar mechej", "filename": "Rytsar_mechej.JPG", "url": "/cards/Rytsar_mechej.JPG" }
+    ,
+    { "name": "Rytsar pentaklej", "filename": "Rytsar_pentaklej.JPG", "url": "/cards/Rytsar_pentaklej.JPG" }
+    ,
+    { "name": "Rytsar zhezlov", "filename": "Rytsar_zhezlov.JPG", "url": "/cards/Rytsar_zhezlov.JPG" }
+    ,
+    { "name": "Semerka kubkov", "filename": "Semerka_kubkov.JPG", "url": "/cards/Semerka_kubkov.JPG" }
+    ,
+    { "name": "Semerka mechej", "filename": "Semerka_mechej.JPG", "url": "/cards/Semerka_mechej.JPG" }
+    ,
+    { "name": "Semerka pentaklej", "filename": "Semerka_pentaklej.JPG", "url": "/cards/Semerka_pentaklej.JPG" }
+    ,
+    { "name": "Semerka zhezlov", "filename": "Semerka_zhezlov.JPG", "url": "/cards/Semerka_zhezlov.JPG" }
+    ,
+    { "name": "Shesterka kubkov", "filename": "Shesterka_kubkov.JPG", "url": "/cards/Shesterka_kubkov.JPG" }
+    ,
+    { "name": "Shesterka mechej", "filename": "Shesterka_mechej.JPG", "url": "/cards/Shesterka_mechej.JPG" }
+    ,
+    { "name": "Shesterka pentaklej", "filename": "Shesterka_pentaklej.JPG", "url": "/cards/Shesterka_pentaklej.JPG" }
+    ,
+    { "name": "Shesterka zhezlov", "filename": "Shesterka_zhezlov.JPG", "url": "/cards/Shesterka_zhezlov.JPG" }
+    ,
+    { "name": "Shut", "filename": "Shut.JPG", "url": "/cards/Shut.JPG" }
+    ,
+    { "name": "Sila", "filename": "Sila.JPG", "url": "/cards/Sila.JPG" }
+    ,
+    { "name": "Smert", "filename": "Smert.JPG", "url": "/cards/Smert.JPG" }
+    ,
+    { "name": "Solntse", "filename": "Solntse.JPG", "url": "/cards/Solntse.JPG" }
+    ,
+    { "name": "Sud", "filename": "Sud.JPG", "url": "/cards/Sud.JPG" }
+    ,
+    { "name": "Trojka kubkov", "filename": "Trojka_kubkov.JPG", "url": "/cards/Trojka_kubkov.JPG" }
+    ,
+    { "name": "Trojka mechej", "filename": "Trojka_mechej.JPG", "url": "/cards/Trojka_mechej.JPG" }
+    ,
+    { "name": "Trojka pentaklej", "filename": "Trojka_pentaklej.JPG", "url": "/cards/Trojka_pentaklej.JPG" }
+    ,
+    { "name": "Trojka zhezlov", "filename": "Trojka_zhezlov.JPG", "url": "/cards/Trojka_zhezlov.JPG" }
+    ,
+    { "name": "Tuz kubkov", "filename": "Tuz_kubkov.JPG", "url": "/cards/Tuz_kubkov.JPG" }
+    ,
+    { "name": "Tuz mechej", "filename": "Tuz_mechej.JPG", "url": "/cards/Tuz_mechej.JPG" }
+    ,
+    { "name": "Tuz pentaklej", "filename": "Tuz_pentaklej.JPG", "url": "/cards/Tuz_pentaklej.JPG" }
+    ,
+    { "name": "Tuz zhezlov", "filename": "Tuz_zhezlov.JPG", "url": "/cards/Tuz_zhezlov.JPG" }
+    ,
+    { "name": "Umerennost", "filename": "Umerennost.JPG", "url": "/cards/Umerennost.JPG" }
+    ,
+    { "name": "Verkhovnyj zhrets", "filename": "Verkhovnyj_zhrets.JPG", "url": "/cards/Verkhovnyj_zhrets.JPG" }
+    ,
+    { "name": "Vlyublennye", "filename": "Vlyublennye.JPG", "url": "/cards/Vlyublennye.JPG" }
+    ,
+    { "name": "Vosmerka kubkov", "filename": "Vosmerka_kubkov.JPG", "url": "/cards/Vosmerka_kubkov.JPG" }
+    ,
+    { "name": "Vosmerka mechej", "filename": "Vosmerka_mechej.JPG", "url": "/cards/Vosmerka_mechej.JPG" }
+    ,
+    { "name": "Vosmerka pentaklej", "filename": "Vosmerka_pentaklej.JPG", "url": "/cards/Vosmerka_pentaklej.JPG" }
+    ,
+    { "name": "Vosmerka zhezlov", "filename": "Vosmerka_zhezlov.JPG", "url": "/cards/Vosmerka_zhezlov.JPG" }
+    ,
+    { "name": "Zhritsa", "filename": "Zhritsa.JPG", "url": "/cards/Zhritsa.JPG" }
+    ,
+    { "name": "Zvezda", "filename": "Zvezda.JPG", "url": "/cards/Zvezda.JPG" }
         ];
 
         let selectedCards = [];
@@ -612,3 +698,4 @@
     </script>
 </body>
 </html>
+
